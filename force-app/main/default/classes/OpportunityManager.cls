@@ -38,7 +38,9 @@ public class OpportunityManager {
 
             for(Opportunity oppToCreateRenewalFor : opportunitiesToCreateRenewals.values()) {
                 Opportunity renewalOpportunity = oppToCreateRenewalFor.clone(false,true,false,false);
-                setFieldsForRenewalOpportunity(renewalOpportunity, oppToCreateRenewalFor.CloseDate);
+                renewalOpportunity.CloseDate = oppToCreateRenewalFor.closeDate.addYears(1);
+                renewalOpportunity.StageName = OpportunityStageNames[0].getValue();
+                renewalOpportunity.Type = RENEWAL;
                 oppToInsert.add(renewalOpportunity);
                 closedOppIdToRenewalOpp.put(oppToCreateRenewalFor.Id, renewalOpportunity);
             }
@@ -67,8 +69,6 @@ public class OpportunityManager {
     }
 
     public static void setFieldsForRenewalOpportunity(Opportunity renewalOpportunity, Date closeDate) {
-        renewalOpportunity.CloseDate = closeDate.addYears(1);
-        renewalOpportunity.StageName = OpportunityStageNames[0].getValue();
-        renewalOpportunity.Type = RENEWAL;
+
     }
 }
