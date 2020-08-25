@@ -1,6 +1,6 @@
 # DCS Code Challenge
 
-## To Get Started:
+## To Get Started (Assumes you have sfdx-cli installed):
 * Please execute this command `sfdx force:source:deploy -m "ApexClass,ApexTrigger"` from the DCS folder to get started
 * After the deploy is complete, execute this command `sfdx force:apex:test:run -r tap -t OpportunityTriggerTests`
 
