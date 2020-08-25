@@ -69,10 +69,10 @@ private class OpportunityTriggerTests {
         
         String opportunityFirstStage = OpportunityManager.OpportunityStageNames[0].getValue();
 
-        List<Opportunity> renewalOpportunites = [SELECT Id,StageName,CloseDate,Type,NextStep FROM Opportunity WHERE StageName = :opportunityFirstStage AND Type = :OpportunityManager.RENEWAL LIMIT 1];
-        System.assertEquals(1, renewalOpportunites.size());
+        List<Opportunity> renewalOpportunities = [SELECT Id,StageName,CloseDate,Type,NextStep FROM Opportunity WHERE StageName = :opportunityFirstStage AND Type = :OpportunityManager.RENEWAL LIMIT 1];
+        System.assertEquals(1, renewalOpportunities.size());
         
-        Opportunity renewalOpportunity = renewalOpportunites[0];
+        Opportunity renewalOpportunity = renewalOpportunities[0];
         System.assertEquals(opportunityFirstStage, renewalOpportunity.StageName);
         System.debug(qualificationOpp.CloseDate);
         System.assertEquals(qualificationOpp.CloseDate.addYears(1), renewalOpportunity.CloseDate);

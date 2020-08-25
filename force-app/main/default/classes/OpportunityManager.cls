@@ -17,26 +17,26 @@ public class OpportunityManager {
     }
     
     public static void handleAfterUpdate(List<Opportunity> updatedOpportunities, Map<Id, Opportunity> oldOpportunities) {
-        Map<Id,Opportunity> opportunitesToCreateRenewals = new Map<Id,Opportunity>();
+        Map<Id,Opportunity> opportunitiesToCreateRenewals = new Map<Id,Opportunity>();
 
         for(Opportunity opp : updatedOpportunities) {
             Opportunity oldOpp = oldOpportunities.get(opp.Id);
             if(opp.StageName == CLOSED_WON && opp.StageName != oldOpp.StageName) {
-                opportunitesToCreateRenewals.put(opp.Id, opp);
+                opportunitiesToCreateRenewals.put(opp.Id, opp);
             }
         }
 
         Map<Id,Opportunity> closedOppIdToRenewalOpp = new Map<Id,Opportunity>();
         List<Opportunity> oppToInsert = new List<Opportunity>();
         List<OpportunityLineItem> relatedOpportunityLineItems = new List<OpportunityLineItem>();
-        if(!opportunitesToCreateRenewals.isEmpty()) {
+        if(!opportunitiesToCreateRenewals.isEmpty()) {
             relatedOpportunityLineItems = [
                 SELECT Id,OpportunityId,Quantity,UnitPrice,PricebookEntryId
                 FROM OpportunityLineItem
                 WHERE OpportunityId
-                IN :opportunitesToCreateRenewals.keySet()];
+                IN :opportunitiesToCreateRenewals.keySet()];
 
-            for(Opportunity oppToCreateRenewalFor : opportunitesToCreateRenewals.values()) {
+            for(Opportunity oppToCreateRenewalFor : opportunitiesToCreateRenewals.values()) {
                 Opportunity renewalOpportunity = oppToCreateRenewalFor.clone(false,true,false,false);
                 setFieldsForRenewalOpportunity(renewalOpportunity, oppToCreateRenewalFor.CloseDate);
                 oppToInsert.add(renewalOpportunity);
