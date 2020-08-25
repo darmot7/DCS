@@ -67,8 +67,4 @@ public class OpportunityManager {
             }
         }
     }
-
-    public static void setFieldsForRenewalOpportunity(Opportunity renewalOpportunity, Date closeDate) {
-
-    }
 }
