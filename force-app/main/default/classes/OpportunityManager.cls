@@ -4,7 +4,7 @@ public class OpportunityManager {
 
     @TestVisible
     private final static String RENEWAL = 'Renewal';
-    
+
     @TestVisible
     private final static List<Schema.PicklistEntry> OpportunityStageNames {
         get {
@@ -45,7 +45,7 @@ public class OpportunityManager {
                 closedOppIdToRenewalOpp.put(oppToCreateRenewalFor.Id, renewalOpportunity);
             }
         }
-            
+
         if(!oppToInsert.isEmpty()) {
             try{
                 insert oppToInsert;

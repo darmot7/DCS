@@ -16,9 +16,9 @@ private class OpportunityTriggerTests {
             preQualificationOpportunity.NextStep = NEXT_STEP;
             oppsToInsert.add(preQualificationOpportunity);
         }
-        
+
         insert oppsToInsert;
-        
+
         List<OpportunityLineItem> oppLineItems = new List<OpportunityLineItem>();
         for(Integer i = 0; i < numberOfOLIsPerOpp * numberToMake; i++) {
             OpportunityLineItem oli = new OpportunityLineItem();
@@ -30,7 +30,6 @@ private class OpportunityTriggerTests {
             oppLineItems.add(oli);
         }
         insert oppLineItems;
-
 
         return oppsToInsert;
     }
@@ -62,17 +61,17 @@ private class OpportunityTriggerTests {
 
         System.assertEquals(1, qualificationOpportunities.size());
         Opportunity qualificationOpp = qualificationOpportunities[0];
-        
+
         Test.startTest();
             qualificationOpp.StageName = OpportunityManager.CLOSED_WON;
             update qualificationOpp;
         Test.stopTest();
-        
+
         String opportunityFirstStage = OpportunityManager.OpportunityStageNames[0].getValue();
 
         List<Opportunity> renewalOpportunities = [SELECT Id,StageName,CloseDate,Type,NextStep FROM Opportunity WHERE StageName = :opportunityFirstStage AND Type = :OpportunityManager.RENEWAL LIMIT 1];
         System.assertEquals(1, renewalOpportunities.size());
-        
+
         Opportunity renewalOpportunity = renewalOpportunities[0];
         System.assertEquals(opportunityFirstStage, renewalOpportunity.StageName);
         System.debug(qualificationOpp.CloseDate);
@@ -80,7 +79,7 @@ private class OpportunityTriggerTests {
         System.assertEquals(OpportunityManager.RENEWAL, renewalOpportunity.Type);
         System.assertEquals(qualificationOpp.NextStep, renewalOpportunity.NextStep);
         List<OpportunityLineItem> closedWonOLIs = [SELECT Id,Quantity, UnitPrice FROM OpportunityLineItem WHERE OpportunityId = :qualificationOpp.Id ORDER BY Id];
-    
+
         List<OpportunityLineItem> renewalOLIs = [SELECT Id,UnitPrice,Discount,Quantity FROM OpportunityLineItem WHERE OpportunityId = :renewalOpportunity.Id ORDER BY Id];
         System.assertEquals(numberOfOLIsPerOpp, renewalOLIs.size());
         for (Integer i = 0; i < renewalOLIs.size(); i++) {
