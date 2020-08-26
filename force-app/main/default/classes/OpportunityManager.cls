@@ -49,7 +49,7 @@ public class OpportunityManager {
         if(!oppToInsert.isEmpty()) {
             try{
                 insert oppToInsert;
-            
+
                 if(!relatedOpportunityLineItems.isEmpty()) {
                     List<OpportunityLineItem> oliToInsert = new List<OpportunityLineItem>();
                     for(OpportunityLineItem relatedOLI : relatedOpportunityLineItems) {
@@ -61,7 +61,7 @@ public class OpportunityManager {
                         newOLI.OpportunityId = closedOppIdToRenewalOpp.get(relatedOLI.OpportunityId).Id;
                         oliToInsert.add(newOLI);
                     }
-    
+
                     if(!oliToInsert.isEmpty()) {
                         insert oliToInsert;
                     }

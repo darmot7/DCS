@@ -78,8 +78,8 @@ private class OpportunityTriggerTests {
         System.assertEquals(qualificationOpp.CloseDate.addYears(1), renewalOpportunity.CloseDate);
         System.assertEquals(OpportunityManager.RENEWAL, renewalOpportunity.Type);
         System.assertEquals(qualificationOpp.NextStep, renewalOpportunity.NextStep);
-        List<OpportunityLineItem> closedWonOLIs = [SELECT Id,Quantity, UnitPrice FROM OpportunityLineItem WHERE OpportunityId = :qualificationOpp.Id ORDER BY Id];
 
+        List<OpportunityLineItem> closedWonOLIs = [SELECT Id,Quantity, UnitPrice FROM OpportunityLineItem WHERE OpportunityId = :qualificationOpp.Id ORDER BY Id];
         List<OpportunityLineItem> renewalOLIs = [SELECT Id,UnitPrice,Discount,Quantity FROM OpportunityLineItem WHERE OpportunityId = :renewalOpportunity.Id ORDER BY Id];
         System.assertEquals(numberOfOLIsPerOpp, renewalOLIs.size());
         for (Integer i = 0; i < renewalOLIs.size(); i++) {
