@@ -47,24 +47,30 @@ public class OpportunityManager {
         }
             
         if(!oppToInsert.isEmpty()) {
-            insert oppToInsert;
+            try{
+                insert oppToInsert;
             
-            if(!relatedOpportunityLineItems.isEmpty()) {
-                List<OpportunityLineItem> oliToInsert = new List<OpportunityLineItem>();
-                for(OpportunityLineItem relatedOLI : relatedOpportunityLineItems) {
-                    OpportunityLineItem newOLI = new OpportunityLineItem();
-                    newOLI.Quantity = relatedOLI.Quantity;
-                    newOLI.UnitPrice = relatedOLI.UnitPrice;
-                    newOLI.Discount = 0;
-                    newOLI.PricebookEntryId = relatedOLI.PricebookEntryId;
-                    newOLI.OpportunityId = closedOppIdToRenewalOpp.get(relatedOLI.OpportunityId).Id;
-                    oliToInsert.add(newOLI);
+                if(!relatedOpportunityLineItems.isEmpty()) {
+                    List<OpportunityLineItem> oliToInsert = new List<OpportunityLineItem>();
+                    for(OpportunityLineItem relatedOLI : relatedOpportunityLineItems) {
+                        OpportunityLineItem newOLI = new OpportunityLineItem();
+                        newOLI.Quantity = relatedOLI.Quantity;
+                        newOLI.UnitPrice = relatedOLI.UnitPrice;
+                        newOLI.Discount = 0;
+                        newOLI.PricebookEntryId = relatedOLI.PricebookEntryId;
+                        newOLI.OpportunityId = closedOppIdToRenewalOpp.get(relatedOLI.OpportunityId).Id;
+                        oliToInsert.add(newOLI);
+                    }
+    
+                    if(!oliToInsert.isEmpty()) {
+                        insert oliToInsert;
+                    }
                 }
-
-                if(!oliToInsert.isEmpty()) {
-                    insert oliToInsert;
-                }
+            } catch (Exception e) {
+                throw new OpportunityManagerException(e.getMessage());
             }
         }
     }
+
+    private class OpportunityManagerException extends Exception {}
 }

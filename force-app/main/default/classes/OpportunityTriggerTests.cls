@@ -1,16 +1,17 @@
 @IsTest
 private class OpportunityTriggerTests {
     private final static String QUALIFICATION = 'Qualification';
-    private static Date referenceDay = Date.newInstance(2020, 8, 25);
-    private final static Integer numberOfOLIsPerOpp = 5;
     private final static String NEXT_STEP = 'FAKENEXTSTEPTHISISNOTAREALVALUE';
+    private final static String NEEDS_ANALYSIS = 'Needs Analysis';
+    private static Date referenceDate = Date.newInstance(2020, 8, 25);
+    private final static Integer numberOfOLIsPerOpp = 5;
 
     static List<Opportunity> createOpportunityAndRelatedOLI(Id productId, Id priceBookEntryId, Integer numberToMake) {
         List<Opportunity> oppsToInsert = new List<Opportunity>();
         for (Integer i = 0; i < numberToMake; i++) {
             Opportunity preQualificationOpportunity = new Opportunity();
             preQualificationOpportunity.Name = 'Pre-Closed Won Opportunity' + i;
-            preQualificationOpportunity.CloseDate = referenceDay;
+            preQualificationOpportunity.CloseDate = referenceDate;
             preQualificationOpportunity.StageName = QUALIFICATION;
             preQualificationOpportunity.NextStep = NEXT_STEP;
             oppsToInsert.add(preQualificationOpportunity);
@@ -56,7 +57,7 @@ private class OpportunityTriggerTests {
             SELECT Id, CloseDate, NextStep
             FROM Opportunity 
             WHERE StageName = :QUALIFICATION 
-            AND CloseDate = :referenceDay 
+            AND CloseDate = :referenceDate 
             LIMIT 1];
 
         System.assertEquals(1, qualificationOpportunities.size());
@@ -100,6 +101,29 @@ private class OpportunityTriggerTests {
         Test.stopTest();
 
         System.assertEquals([SELECT Count() FROM Opportunity] * numberOfOLIsPerOpp, [SELECT Count() FROM OpportunityLineItem]);
+    }
+
+    @IsTest
+    static void handleAfterUpdateNoRenewal() {
+        List<Opportunity> qualificationOpportunities = [
+            SELECT Id, CloseDate, NextStep
+            FROM Opportunity 
+            WHERE StageName = :QUALIFICATION 
+            AND CloseDate = :referenceDate 
+            LIMIT 1];
+
+        System.assertEquals(1, qualificationOpportunities.size());
+        Opportunity qualificationOpp = qualificationOpportunities[0];
+
+        Test.startTest();
+            qualificationOpp.StageName = NEEDS_ANALYSIS;
+            update qualificationOpp;
+        Test.stopTest();
+
+        String opportunityFirstStage = OpportunityManager.OpportunityStageNames[0].getValue();
+        List<Opportunity> renewalOpportunities = [SELECT Id,StageName,CloseDate,Type,NextStep FROM Opportunity WHERE StageName = :opportunityFirstStage AND Type = :OpportunityManager.RENEWAL LIMIT 1];
+        System.assertEquals(0, renewalOpportunities.size());
+        System.assertEquals(numberOfOLIsPerOpp, [SELECT Count() FROM OpportunityLineItem]);
     }
 
 }
